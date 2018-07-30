@@ -43,7 +43,7 @@ function update_setting() {
   if [[ -e "${file}" ]]; then
     sed -ri \
     -e 's/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$//' \
-    -e '/$ a \$config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
+    -e '/$ a \$config_directories[CONFIG_SYNC_DIRECTORY] = "config\/sync";' \
     "${file}"
   fi
   
