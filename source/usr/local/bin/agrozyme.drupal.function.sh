@@ -17,6 +17,22 @@ function extract_file() {
   fi
 }
 
+function security_fix() {
+  local security=${DRUPAL_SECURITY:-}
+  local html=/var/www/html
+  
+  if [[ "YES" != "${security}" ]]; then
+    return
+  fi
+  
+  rm -f "${html}/robots.txt"
+  
+  if [[ -e "${html}/config/sync/.htaccess" ]]; then
+    cp "${html}/config/sync/.htaccess" "${html}/config/"
+  fi
+  
+}
+
 function update_setting() {
   local file=${1:-}
   
@@ -27,7 +43,7 @@ function update_setting() {
   if [[ -e "${file}" ]]; then
     sed -ri \
     -e 's/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$//' \
-    -e '/^\$config_directories = array\(\);$/a \$config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
+    -e '/$ a \$config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
     "${file}"
   fi
   
@@ -43,6 +59,7 @@ function main() {
   mkdir -p "${html}/config/sync"
   update_setting "${default}/default.settings.php" "${default}/settings.php"
   rm -rf "${default}/files/config_*/"
+  security_fix
 }
 
 main "$@"
