@@ -85,7 +85,7 @@ function update_settings() {
   fi
   
   shift
-  update_setting "$@"
+  update_settings "$@"
 }
 
 function main() {
