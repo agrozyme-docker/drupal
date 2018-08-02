@@ -25,10 +25,8 @@ function update_config_sync_settings() {
     return
   fi
   
-  sed -ri \
-  -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' \
-  -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
-  "${file}"
+  sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
+  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' "${file}"
 }
 
 function update_reverse_proxy_settings() {
@@ -74,7 +72,6 @@ function update_settings() {
   fi
   
   if [[ -f "${file}" ]]; then
-    chmod +w "${file}"
     update_config_sync_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
