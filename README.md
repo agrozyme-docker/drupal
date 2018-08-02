@@ -6,6 +6,11 @@ When you start the image, you can adjust the configuration of the instance by pa
 ## DRUPAL_RESET
 These variables are optional, set `YES` to overwrite files.
 
+**If it set `YES`, use `composer` to update and optimize autoloader.**
+```
+composer update -o
+```
+
 ## DRUPAL_SECURITY
 These variables are optional, set `YES` to remove `robots.txt` and protect `config` directory.
 
@@ -13,6 +18,7 @@ These variables are optional, set `YES` to remove `robots.txt` and protect `conf
 These variables are optional, can set:
 - `none`: no reverse proxy, it will comment all reverse proxy settings.
 - `traefik`: assume use traefik reverse proxy, it will set all reverse proxy settings for traefik.
+
   set those settings in traefik service at docker-compose file for get real client IP.
 ```
 ports:
