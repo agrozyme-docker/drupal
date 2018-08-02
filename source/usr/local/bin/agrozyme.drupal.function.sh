@@ -17,20 +17,18 @@ function extract_file() {
   fi
 }
 
-function security_fix() {
-  local security=${DRUPAL_SECURITY:-}
-  local html=/var/www/html
+
+function update_config_sync_settings() {
+  local file=${1:-}
   
-  if [[ "YES" != "${security}" ]]; then
+  if [[ ! -f "${file}" ]]; then
     return
   fi
   
-  rm -f "${html}/robots.txt"
-  
-  if [[ -e "${html}/config/sync/.htaccess" ]]; then
-    cp "${html}/config/sync/.htaccess" "${html}/config/"
-  fi
-  
+  sed -ri \
+  -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' \
+  -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
+  "${file}"
 }
 
 function update_reverse_proxy_settings() {
@@ -77,11 +75,7 @@ function update_settings() {
   
   if [[ -f "${file}" ]]; then
     chmod +w "${file}"
-    sed -ri \
-    -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' \
-    -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
-    "${file}"
-    
+    update_config_sync_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
   
@@ -89,15 +83,31 @@ function update_settings() {
   update_settings "$@"
 }
 
+function update_security() {
+  local security=${DRUPAL_SECURITY:-}
+  local html=/var/www/html
+  local htaccess="${html}/vendor/.htaccess"
+  
+  if [[ "YES" != "${security}" ]]; then
+    return
+  fi
+  
+  rm -f "${html}/robots.txt"
+  
+  if [[ -e "${htaccess}" ]]; then
+    cp "${htaccess}" "${html}/config/"
+  fi
+  
+}
 function main() {
   local html=/var/www/html
   local default="${html}/sites/default"
   
   extract_file
   mkdir -p "${html}/config/sync"
-  update_settings "${default}/default.settings.php" "${default}/settings.php"
   rm -rf "${default}/files/config_*/"
-  security_fix
+  update_settings "${default}/default.settings.php" "${default}/settings.php"
+  update_security
 }
 
 main "$@"
