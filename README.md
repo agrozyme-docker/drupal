@@ -6,9 +6,9 @@ When you start the image, you can adjust the configuration of the instance by pa
 ## DRUPAL_RESET
 These variables are optional, set `YES` to overwrite files.
 
-**If it set `YES`, use `composer` to update and optimize autoloader.**
+**If it set `YES`, execute the command after (re)start container.**
 ```
-composer update -o
+composer update
 ```
 
 ## DRUPAL_SECURITY
