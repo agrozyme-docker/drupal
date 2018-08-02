@@ -3,7 +3,7 @@ set -euo pipefail
 
 function extract_file() {
   local reset=${DRUPAL_RESET:-}
-  local version=8.5.5
+  local version=${DRUPAL_VERSION}
   local extract="tar xzf /var/www/drupal.tar.gz --strip-components=1 drupal-${version}/"
   
   if [[ -z "$(ls -A /var/www/html)" ]]; then
