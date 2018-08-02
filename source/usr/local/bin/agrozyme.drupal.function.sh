@@ -76,6 +76,7 @@ function update_settings() {
   fi
   
   if [[ -f "${file}" ]]; then
+    chmod +w "${file}"
     sed -ri \
     -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' \
     -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' \
