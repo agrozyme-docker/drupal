@@ -17,6 +17,15 @@ function extract_file() {
   fi
 }
 
+function update_config_private_settings() {
+  local file=${1:-}
+  
+  if [[ ! -f "${file}" ]]; then
+    return
+  fi
+  
+  sed -ri -e 's/^[#[:space:]]*(\$settings\[\x27file_private_path\x27\])[[:space:]]*=.*$/\1 = "sites/default/private"/' "${file}"
+}
 
 function update_config_sync_settings() {
   local file=${1:-}
@@ -72,6 +81,7 @@ function update_settings() {
   fi
   
   if [[ -f "${file}" ]]; then
+    update_config_private_settings "${file}"
     update_config_sync_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
@@ -94,8 +104,8 @@ function update_security() {
   if [[ -e "${htaccess}" ]]; then
     cp "${htaccess}" "${html}/config/"
   fi
-  
 }
+
 function main() {
   local html=/var/www/html
   local default="${html}/sites/default"
