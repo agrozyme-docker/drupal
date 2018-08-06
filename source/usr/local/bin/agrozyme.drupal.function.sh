@@ -24,7 +24,7 @@ function update_config_private_settings() {
     return
   fi
   
-  sed -ri -e 's!^[\/#[:space:]]*(\$settings\[\x27file_private_path\x27\])[[:space:]]*=.*$!\1 = "sites/default/private"!' "${file}"
+  sed -ri -e 's!^[\/#[:space:]]*(\$settings\[\x27file_private_path\x27\])[[:space:]]*=.*$!\1 = "sites/default/private";!' "${file}"
 }
 
 function update_config_sync_settings() {
