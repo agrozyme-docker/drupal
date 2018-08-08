@@ -28,8 +28,5 @@ ports:
   - target: 443
     published: 443
     mode: host
-  - target: 8080
-    published: 8080
-    mode: host
 ```
 - no set or others will ignore.
