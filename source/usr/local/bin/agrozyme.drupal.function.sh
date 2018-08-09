@@ -17,6 +17,17 @@ function extract_file() {
   fi
 }
 
+function make_gitignore() {
+  local html=/var/www/html
+  local ignore="${html}"/.gitignore
+  
+  if [[ -f "${ignore}" ]]; then
+    return
+  fi
+  
+  cp "${html}"/example.gitignore "${ignore}"
+}
+
 function update_config_private_settings() {
   local file=${1:-}
   
@@ -35,7 +46,7 @@ function update_config_sync_settings() {
   fi
   
   sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
-  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/sync";' "${file}"
+  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/default";' "${file}"
 }
 
 function update_reverse_proxy_settings() {
@@ -111,6 +122,7 @@ function main() {
   local default="${html}/sites/default"
   
   extract_file
+  make_gitignore
   mkdir -p "${html}/config/sync" "${default}/private"
   rm -rf "${default}/files/config_*/"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
