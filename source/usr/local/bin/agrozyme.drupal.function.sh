@@ -123,8 +123,8 @@ function main() {
   
   extract_file
   make_gitignore
-  mkdir -p "${html}/config/sync" "${default}/private"
   rm -rf "${default}/files/config_*/"
+  mkdir -p "${html}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security
 }
