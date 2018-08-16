@@ -39,7 +39,7 @@ function update_class_loader_auto_detect() {
   if [[ "YES" == "${detect}" ]]; then
     sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' "${file}"
   else
-    sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = FALSE;/' "${file}"
+    sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = FALSE;/' "${file}"
   fi
 }
 
