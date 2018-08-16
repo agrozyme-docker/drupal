@@ -11,6 +11,10 @@ These variables are optional, set `YES` to overwrite files.
 composer update
 ```
 
+## DRUPAL_CLASS_LOADER_AUTO_DETECT
+These variables are optional, set `YES` to use APC class loader.
+**If the site get HTTP code 500, can set `NO` and try again.**
+
 ## DRUPAL_SECURITY
 These variables are optional, set `YES` to remove `robots.txt` and protect `config` directory.
 

@@ -28,6 +28,21 @@ function make_gitignore() {
   cp "${html}"/example.gitignore "${ignore}"
 }
 
+function update_class_loader_auto_detect() {
+  local file=${1:-}
+  local detect=${DRUPAL_CLASS_LOADER_AUTO_DETECT:-}
+  
+  if [[ ! -f "${file}" ]]; then
+    return
+  fi
+  
+  if [[ "YES" == "${detect}" ]]; then
+    sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' "${file}"
+  else
+    sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = FALSE;/' "${file}"
+  fi
+}
+
 function update_config_private_settings() {
   local file=${1:-}
   
@@ -48,6 +63,8 @@ function update_config_sync_settings() {
   sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
   sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/default";' "${file}"
 }
+
+
 
 function update_reverse_proxy_settings() {
   local file=${1:-}
@@ -92,6 +109,7 @@ function update_settings() {
   fi
   
   if [[ -f "${file}" ]]; then
+    update_class_loader_auto_detect "${file}"
     update_config_private_settings "${file}"
     update_config_sync_settings "${file}"
     update_reverse_proxy_settings "${file}"
@@ -100,6 +118,7 @@ function update_settings() {
   shift
   update_settings "$@"
 }
+
 
 function update_security() {
   local security=${DRUPAL_SECURITY:-}
