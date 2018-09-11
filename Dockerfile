@@ -1,6 +1,6 @@
 FROM agrozyme/php:7.2
 COPY source /
-ENV DRUPAL_VERSION=8.6.0
+ENV DRUPAL_VERSION=8.6.1
 
 RUN set -euxo pipefail \
   && chmod +x /usr/local/bin/*.sh \
