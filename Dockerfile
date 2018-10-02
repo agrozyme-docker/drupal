@@ -1,4 +1,4 @@
-FROM agrozyme/php:7.2
+FROM agrozyme/composer:1.7
 COPY source /
 ENV DRUPAL_VERSION=8.6.1
 
