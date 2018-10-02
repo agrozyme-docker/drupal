@@ -138,8 +138,6 @@ function update_security() {
 
 function update_composer() {
   local composer=/usr/local/bin/composer.phar
-  # wget -O ${composer} https://getcomposer.org/composer.phar
-  # chmod +x ${composer}
   ${composer} -n global require hirak/prestissimo
   ${composer} -n update
 }
