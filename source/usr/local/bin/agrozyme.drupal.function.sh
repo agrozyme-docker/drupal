@@ -136,6 +136,14 @@ function update_security() {
   fi
 }
 
+function update_composer() {
+  local composer=/usr/local/bin/composer.phar
+  wget -O ${composer} https://getcomposer.org/composer.phar
+  chmod +x ${composer}
+  ${composer} global require hirak/prestissimo
+  ${composer} update
+}
+
 function main() {
   local html=/var/www/html
   local default="${html}/sites/default"
@@ -146,6 +154,7 @@ function main() {
   mkdir -p "${html}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security
+  update_composer
 }
 
 main "$@"
