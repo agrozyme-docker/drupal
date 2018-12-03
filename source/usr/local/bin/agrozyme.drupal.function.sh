@@ -1,22 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-function extract_file() {
-  local reset=${DRUPAL_RESET:-}
-  local version=${DRUPAL_VERSION}
-  local extract="tar xzf /var/www/drupal.tar.gz --strip-components=1 drupal-${version}/"
-  
-  if [[ -z "$(ls -A /var/www/html)" ]]; then
-    ${extract}
-    return
-  fi
-  
-  if [[ "YES" == "${reset}" ]]; then
-    ${extract} --exclude "drupal-${version}/composer.*"
-    return
-  fi
-}
-
 function create_project() {
   local composer=${1:-}
   local html=${2:-.}
@@ -27,17 +11,6 @@ function create_project() {
     ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}"
     return
   fi
-}
-
-function make_gitignore() {
-  local html=/var/www/html
-  local ignore="${html}"/.gitignore
-  
-  if [[ -f "${ignore}" ]]; then
-    return
-  fi
-  
-  cp "${html}"/example.gitignore "${ignore}"
 }
 
 function update_class_loader_auto_detect() {

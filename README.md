@@ -3,14 +3,6 @@ Drupal is an open source content management platform powering millions of websit
 # Environment Variables
 When you start the image, you can adjust the configuration of the instance by passing one or more environment variables on the docker run command line.
 
-## DRUPAL_RESET
-These variables are optional, set `YES` to overwrite files.
-
-**If it set `YES`, execute the command after (re)start container.**
-```
-composer update
-```
-
 ## DRUPAL_CLASS_LOADER_AUTO_DETECT
 These variables are optional, set `YES` to use APC class loader.
 **If the site get HTTP code 500, can set `NO` and try again.**
