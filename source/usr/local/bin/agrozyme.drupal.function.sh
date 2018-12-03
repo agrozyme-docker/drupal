@@ -17,6 +17,15 @@ function extract_file() {
   fi
 }
 
+function create_project() {
+  local html=${1:-.}
+
+  if [[ -z "$(ls -A ${html})" ]]; then
+    composer.sh create-project drupal-composer/drupal-project:8.x-dev "${html}" --no-interaction
+    return
+  fi
+}
+
 function make_gitignore() {
   local html=/var/www/html
   local ignore="${html}"/.gitignore
@@ -139,19 +148,20 @@ function update_security() {
 function update_composer() {
   local composer=/usr/local/bin/composer.phar
   ${composer} -n global require hirak/prestissimo
+  ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
   ${composer} -n update
 }
 
 function main() {
   local html=/var/www/html
-  local default="${html}/sites/default"
+  local web="${html}/web"
+  local default="${web}/sites/default"
   
-  extract_file
-  make_gitignore
+  create_project "${html}"
   rm -rf "${default}/files/config_*/"
-  mkdir -p "${html}/config/default" "${default}/private"
+  mkdir -p "${web}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
-  update_security
+  # update_security
   update_composer
 }
 

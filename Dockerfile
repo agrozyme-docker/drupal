@@ -1,9 +1,8 @@
 FROM agrozyme/composer:1.7
 COPY source /
-ENV DRUPAL_VERSION=8.6.3
+# ENV DRUPAL_VERSION=8.6.3
 
 RUN set -euxo pipefail \
-  && chmod +x /usr/local/bin/*.sh \
-  && wget -O /var/www/drupal.tar.gz "https://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz"
+  && chmod +x /usr/local/bin/*.sh
 
 CMD ["agrozyme.drupal.command.sh"]
