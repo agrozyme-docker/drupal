@@ -134,21 +134,22 @@ function update_settings() {
 
 function update_security() {
   local security=${DRUPAL_SECURITY:-}
-  local html=/var/www/html
+  local html=${1:-.}
+  local web="${html}/web"
   local htaccess="${html}/vendor/.htaccess"
   
   if [[ "YES" != "${security}" ]]; then
     return
   fi
   
-  rm -f "${html}/robots.txt"
+  rm -f "${web}/robots.txt"
   
   if [[ -e "${htaccess}" ]]; then
-    cp "${htaccess}" "${html}/config/"
+    cp "${htaccess}" "${web}/config/"
   fi
 }
 
-function update_composer() {
+function composer_update() {
   local composer=${1:-}
   ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
   ${composer} -n update
@@ -164,7 +165,7 @@ function main() {
   rm -rf "${default}/files/config_*/"
   mkdir -p "${web}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
-  # update_security
+  update_security "${html}"
   composer_update "${composer}"
 }
 
