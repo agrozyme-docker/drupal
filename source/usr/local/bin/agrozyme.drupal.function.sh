@@ -149,7 +149,7 @@ function update_security() {
   fi
 }
 
-function composer_update() {
+function update_composer() {
   local composer=${1:-}
   ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
   ${composer} -n update
@@ -166,7 +166,7 @@ function main() {
   mkdir -p "${web}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security "${html}"
-  composer_update "${composer}"
+  update_composer "${composer}"
 }
 
 main "$@"
