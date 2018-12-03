@@ -1,4 +1,4 @@
-FROM agrozyme/composer:1.7
+FROM agrozyme/composer:1.8
 COPY source /
 
 RUN set -euxo pipefail \
