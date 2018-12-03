@@ -19,10 +19,11 @@ function extract_file() {
 
 function create_project() {
   local html=${1:-.}
+  local composer=/usr/local/bin/composer.phar
 
   # if [[ -z "$(ls -A ${html}/web)" ]]; then
   if [[ ! -f "${html}/composer.json" ]]; then
-    composer.sh create-project drupal-composer/drupal-project:8.x-dev "${html}" --no-interaction
+    ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}"
     return
   fi
 }
