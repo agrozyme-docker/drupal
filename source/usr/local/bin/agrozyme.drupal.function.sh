@@ -8,7 +8,7 @@ function create_project() {
   ${composer} -n global require hirak/prestissimo
 
   if [[ ! -f "${html}/composer.json" ]]; then
-    ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}"
+    ${composer} -n create-project drupal-composer/drupal-project:7.x-dev "${html}"
     return
   fi
 }
@@ -124,7 +124,7 @@ function update_security() {
 
 function update_composer() {
   local composer=${1:-}
-  ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
+  # ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
   ${composer} -n update
 }
 
@@ -135,9 +135,10 @@ function main() {
   local composer=/usr/local/bin/composer.phar
 
   create_project "${composer}" "${html}"
-  rm -rf "${default}/files/config_*/"
-  mkdir -p "${web}/config/default" "${default}/private"
-  update_settings "${default}/default.settings.php" "${default}/settings.php"
+  # rm -rf "${default}/files/config_*/"
+  # mkdir -p "${web}/config/default" "${default}/private"
+  mkdir -p "${default}/private"
+  # update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security "${html}"
   update_composer "${composer}"
 }
