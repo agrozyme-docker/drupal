@@ -7,10 +7,20 @@ function create_project() {
 
   ${composer} -n global require hirak/prestissimo
 
-  if [[ ! -f "${html}/composer.json" ]]; then
-    ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}"
+  if [[ -f "${html}/composer.json" ]]; then
     return
   fi
+
+  ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}" --no-install
+  ${composer} -n config --unset repositories.0
+  ${composer} -n config repositories.drupal composer https://packages.drupal.org/8
+  ${composer} -n config repositories.asset-packagist composer https://asset-packagist.org
+
+  ${composer} -n config extra.installer-types.0 bower-asset
+  ${composer} -n config extra.installer-types.1 npm-asset
+
+  ${composer} -n install
+  ${composer} -n require "oomphinc/composer-installers-extender:^1.1"
 }
 
 function update_class_loader_auto_detect() {
