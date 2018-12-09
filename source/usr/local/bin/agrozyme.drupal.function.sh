@@ -2,19 +2,23 @@
 set -euo pipefail
 
 function create_project() {
-  local composer=${1:-}
-  local html=${2:-.}
+  local html=${1:-.}
   local json="${html}/composer.json"
 
-  ${composer} -n global require hirak/prestissimo
+  composer.phar -n global require hirak/prestissimo
 
   if [[ -f "${json}" ]]; then
     return
   fi
 
-  ${composer} -n create-project drupal-composer/drupal-project:8.x-dev "${html}" --no-install
+  local drupal="${html}/../drupal"
+  composer.phar -n create-project drupal-composer/drupal-project:8.x-dev "${drupal}" --no-install
   cp "${html}/../composer.json" "${json}"
-  ${composer} -n install
+  cd "${drupal}"
+  composer.phar -n install
+  cd "${html}"
+  cp -R "${drupal}/." "${html}/"
+  rm -rf "${drupal}"
 }
 
 function update_class_loader_auto_detect() {
@@ -127,9 +131,8 @@ function update_security() {
 }
 
 function update_composer() {
-  local composer=${1:-}
-  ${composer} -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
-  ${composer} -n update
+  composer.phar -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
+  composer.phar -n update
 }
 
 function main() {
@@ -138,12 +141,12 @@ function main() {
   local default="${web}/sites/default"
   local composer=/usr/local/bin/composer.phar
 
-  create_project "${composer}" "${html}"
+  create_project "${html}"
   rm -rf "${default}/files/config_*/"
   mkdir -p "${web}/config/default" "${default}/private"
   update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security "${html}"
-  update_composer "${composer}"
+  update_composer
 }
 
 main "$@"
