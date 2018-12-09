@@ -2,15 +2,23 @@
 set -euo pipefail
 
 function create_project() {
-  local composer=${1:-}
-  local html=${2:-.}
+  local html=${1:-.}
+  local json="${html}/composer.json"
 
-  ${composer} -n global require hirak/prestissimo
+  composer.phar -n global require hirak/prestissimo
 
-  if [[ ! -f "${html}/composer.json" ]]; then
-    ${composer} -n create-project drupal-composer/drupal-project:7.x-dev "${html}"
+  if [[ -f "${json}" ]]; then
     return
   fi
+
+  local drupal="${html}/../drupal"
+  composer.phar -n create-project drupal-composer/drupal-project:7.x-dev "${drupal}" --no-install
+  cp "${html}/../composer.json" "${json}"
+  cd "${drupal}"
+  composer.phar -n install
+  cd "${html}"
+  cp -R "${drupal}/." "${html}/"
+  rm -rf "${drupal}"
 }
 
 function update_class_loader_auto_detect() {
@@ -123,21 +131,19 @@ function update_security() {
 }
 
 function update_composer() {
-  local composer=${1:-}
-  ${composer} -n update
+  composer.phar -n update
 }
 
 function main() {
   local html=/var/www/html
   local web="${html}/web"
   local default="${web}/sites/default"
-  local composer=/usr/local/bin/composer.phar
 
-  create_project "${composer}" "${html}"
+  create_project "${html}"
   mkdir -p "${default}/private"
   # update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security "${html}"
-  update_composer "${composer}"
+  update_composer
 }
 
 main "$@"
