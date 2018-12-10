@@ -50,9 +50,19 @@ function update_config_sync_settings() {
   fi
   
   sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
-  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/default";' "${file}"
+  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "../config/sync";' "${file}"
 }
 
+function update_config_content_settings() {
+  local file=${1:-}
+  
+  if [[ ! -f "${file}" ]]; then
+    return
+  fi
+  
+  sed -ri -e '/^[#[:space:]]*\$settings\["default_content_deploy_content_directory"\][[:space:]]*=.*$/d' "${file}"
+  sed -ri -e '$ a $settings["default_content_deploy_content_directory"] = "../content";' "${file}"
+}
 
 
 function update_reverse_proxy_settings() {
@@ -101,6 +111,7 @@ function update_settings() {
     update_class_loader_auto_detect "${file}"
     update_config_private_settings "${file}"
     update_config_sync_settings "${file}"
+    update_config_content_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
   
@@ -133,13 +144,11 @@ function update_composer() {
 
 function main() {
   local html=/var/www/html
-  local web="${html}/web"
-  local default="${web}/sites/default"
-  local composer=/usr/local/bin/composer.phar
+  local default="${html}/web/sites/default"
 
   create_project "${html}"
   rm -rf "${default}/files/config_*/"
-  mkdir -p "${web}/config/default" "${default}/private"
+  mkdir -p "${default}/private" "${html}/config/sync" "${html}/content" 
   update_settings "${default}/default.settings.php" "${default}/settings.php"
   update_security "${html}"
   update_composer
