@@ -11,14 +11,10 @@ function create_project() {
     return
   fi
 
-  local drupal="${html}/../drupal"
-  composer.phar -n create-project drupal-composer/drupal-project:8.x-dev "${drupal}" --no-install
+  mkdir -p "${html}"
+  tar -C "${html}" -zxf "${html}/../drupal-project.tgz" --strip-components=1
   cp "${html}/../composer.json" "${json}"
-  cd "${drupal}"
-  composer.phar -n install
-  cd "${html}"
-  cp -R "${drupal}/." "${html}/"
-  rm -rf "${drupal}"
+  composer.phar -n update
 }
 
 function update_class_loader_auto_detect() {
