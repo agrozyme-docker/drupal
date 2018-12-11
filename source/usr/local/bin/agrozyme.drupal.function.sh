@@ -11,7 +11,6 @@ function create_project() {
     return
   fi
 
-  mkdir -p "${html}"
   tar -C "${html}" -zxf "${html}/../drupal-project.tgz" --strip-components=1
   cp "${html}/../composer.json" "${json}"
   composer.phar -n update
@@ -123,18 +122,13 @@ function update_settings() {
 function update_security() {
   local security=${DRUPAL_SECURITY:-}
   local html=${1:-.}
-  local web="${html}/web"
-  local htaccess="${html}/vendor/.htaccess"
   
   if [[ "YES" != "${security}" ]]; then
     return
   fi
   
+  local web="${html}/web"
   rm -f "${web}/robots.txt"
-  
-  if [[ -e "${htaccess}" ]]; then
-    cp "${htaccess}" "${web}/config/"
-  fi
 }
 
 function update_composer() {
