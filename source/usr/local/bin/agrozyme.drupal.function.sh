@@ -41,17 +41,6 @@ function update_config_private_settings() {
   sed -ri -e 's!^[\/#[:space:]]*(\$settings\[\x27file_private_path\x27\])[[:space:]]*=.*$!\1 = "sites/default/private";!' "${file}"
 }
 
-function update_config_sync_settings() {
-  local file=${1:-}
-  
-  if [[ ! -f "${file}" ]]; then
-    return
-  fi
-  
-  sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
-  sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "../config/sync";' "${file}"
-}
-
 function update_config_content_settings() {
   local file=${1:-}
   
@@ -109,7 +98,6 @@ function update_settings() {
   if [[ -f "${file}" ]]; then
     update_class_loader_auto_detect "${file}"
     update_config_private_settings "${file}"
-    update_config_sync_settings "${file}"
     update_config_content_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
