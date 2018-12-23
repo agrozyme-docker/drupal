@@ -18,13 +18,13 @@ function create_project() {
 
 function update_class_loader_auto_detect() {
   local file=${1:-}
-  local detect=${DRUPAL_CLASS_LOADER_AUTO_DETECT:-}
+  local switch=${DRUPAL_CLASS_LOADER_AUTO_DETECT:-}
   
   if [[ ! -f "${file}" ]]; then
     return
   fi
   
-  if [[ "YES" == "${detect}" ]]; then
+  if [[ "YES" == "${switch}" ]]; then
     sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' "${file}"
   else
     sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = FALSE;/' "${file}"
@@ -55,13 +55,13 @@ function update_config_content_settings() {
 
 function update_reverse_proxy_settings() {
   local file=${1:-}
-  local reverse_proxy=${DRUPAL_REVERSE_PROXY:-}
+  local switch=${DRUPAL_REVERSE_PROXY:-}
   
-  if [[ ! -f "${file}" ]] || [[ -z "${reverse_proxy}" ]]; then
+  if [[ ! -f "${file}" ]] || [[ -z "${switch}" ]]; then
     return
   fi
   
-  case "${reverse_proxy}" in
+  case "${switch}" in
     none)
       sed -ri \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' \
@@ -108,10 +108,10 @@ function update_settings() {
 
 
 function update_security() {
-  local security=${DRUPAL_SECURITY:-}
+  local switch=${DRUPAL_SECURITY:-}
   local html=${1:-.}
   
-  if [[ "YES" != "${security}" ]]; then
+  if [[ "YES" != "${switch}" ]]; then
     return
   fi
   
@@ -120,6 +120,12 @@ function update_security() {
 }
 
 function update_composer() {
+  local switch=${DRUPAL_COMPOSER_UPDATE:-}
+
+  if [[ "YES" != "${switch}" ]]; then
+    return
+  fi
+
   composer.phar -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies
   composer.phar -n update
 }
