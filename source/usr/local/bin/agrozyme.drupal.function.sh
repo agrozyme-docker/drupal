@@ -11,25 +11,20 @@ function create_project() {
     return
   fi
 
-  local drupal="${html}/../drupal"
-  composer.phar -n create-project drupal-composer/drupal-project:7.x-dev "${drupal}" --no-install
+  tar -C "${html}" -zxf "${html}/../drupal-project.tgz" --strip-components=1
   cp "${html}/../composer.json" "${json}"
-  cd "${drupal}"
-  composer.phar -n install
-  cd "${html}"
-  cp -R "${drupal}/." "${html}/"
-  rm -rf "${drupal}"
+  composer.phar -n update
 }
 
 function update_class_loader_auto_detect() {
   local file=${1:-}
-  local detect=${DRUPAL_CLASS_LOADER_AUTO_DETECT:-}
-  
+  local switch=${DRUPAL_CLASS_LOADER_AUTO_DETECT:-}
+
   if [[ ! -f "${file}" ]]; then
     return
   fi
-  
-  if [[ "YES" == "${detect}" ]]; then
+
+  if [[ "YES" == "${switch}" ]]; then
     sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' "${file}"
   else
     sed -ri -e 's/^[\/#[:space:]]*(\$settings\[\x27class_loader_auto_detect\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = FALSE;/' "${file}"
@@ -38,38 +33,36 @@ function update_class_loader_auto_detect() {
 
 function update_config_private_settings() {
   local file=${1:-}
-  
+
   if [[ ! -f "${file}" ]]; then
     return
   fi
-  
+
   sed -ri -e 's!^[\/#[:space:]]*(\$settings\[\x27file_private_path\x27\])[[:space:]]*=.*$!\1 = "sites/default/private";!' "${file}"
 }
 
 function update_config_sync_settings() {
   local file=${1:-}
-  
+
   if [[ ! -f "${file}" ]]; then
     return
   fi
-  
+
   sed -ri -e '/^[#[:space:]]*\$config_directories\[CONFIG_SYNC_DIRECTORY\][[:space:]]*=.*$/d' "${file}"
   sed -ri -e '$ a $config_directories[CONFIG_SYNC_DIRECTORY] = "config/default";' "${file}"
 }
 
-
-
 function update_reverse_proxy_settings() {
   local file=${1:-}
-  local reverse_proxy=${DRUPAL_REVERSE_PROXY:-}
-  
-  if [[ ! -f "${file}" ]] || [[ -z "${reverse_proxy}" ]]; then
+  local switch=${DRUPAL_REVERSE_PROXY:-}
+
+  if [[ ! -f "${file}" ]] || [[ -z "${switch}" ]]; then
     return
   fi
-  
-  case "${reverse_proxy}" in
-    none)
-      sed -ri \
+
+  case "${switch}" in
+  none)
+    sed -ri \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_addresses\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_header\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' \
@@ -79,8 +72,8 @@ function update_reverse_proxy_settings() {
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_forwarded_header\x27\])[[:space:]]*=(.*)$/# \1 = \2/' \
       "${file}"
     ;;
-    traefik)
-      sed -ri \
+  traefik)
+    sed -ri \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = TRUE;/' \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_addresses\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = [$_SERVER["REMOTE_ADDR"]];/' \
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_header\x27\])[[:space:]]*=[[:space:]]*(.*)$/\1 = "x-real-ip";/' \
@@ -90,54 +83,54 @@ function update_reverse_proxy_settings() {
       -e 's/^[\/#[:space:]]*(\$settings\[\x27reverse_proxy_forwarded_header\x27\])[[:space:]]*=[[:space:]]*(.*)$/# \1 = \2/' \
       "${file}"
     ;;
-    *)
+  *) ;;
   esac
+
 }
 
 function update_settings() {
   local file=${1:-}
-  
+
   if [[ -z "${file}" ]]; then
     return
   fi
-  
+
   if [[ -f "${file}" ]]; then
     update_class_loader_auto_detect "${file}"
     update_config_private_settings "${file}"
     update_config_sync_settings "${file}"
     update_reverse_proxy_settings "${file}"
   fi
-  
+
   shift
   update_settings "$@"
 }
 
-
 function update_security() {
-  local security=${DRUPAL_SECURITY:-}
+  local switch=${DRUPAL_SECURITY:-}
   local html=${1:-.}
-  local web="${html}/web"
-  local htaccess="${html}/vendor/.htaccess"
-  
-  if [[ "YES" != "${security}" ]]; then
+
+  if [[ "YES" != "${switch}" ]]; then
     return
   fi
-  
+
+  local web="${html}/web"
   rm -f "${web}/robots.txt"
-  
-  if [[ -e "${htaccess}" ]]; then
-    cp "${htaccess}" "${web}/config/"
-  fi
 }
 
 function update_composer() {
+  local switch=${DRUPAL_COMPOSER_UPDATE:-}
+
+  if [[ "YES" != "${switch}" ]]; then
+    return
+  fi
+
   composer.phar -n update
 }
 
 function main() {
   local html=/var/www/html
-  local web="${html}/web"
-  local default="${web}/sites/default"
+  local default="${html}/web/sites/default"
 
   create_project "${html}"
   mkdir -p "${default}/private"
