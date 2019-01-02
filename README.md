@@ -1,3 +1,4 @@
+# Summary
 Drupal is an open source content management platform powering millions of websites and applications.
 
 # Environment Variables
@@ -20,13 +21,14 @@ These variables are optional, can set:
 - `traefik`: assume use traefik reverse proxy, it will set all reverse proxy settings for traefik.
 
   set those settings in traefik service at docker-compose file for get real client IP.
-```
-ports:
-  - target: 80
-    published: 80
-    mode: host
-  - target: 443
-    published: 443
-    mode: host
-```
+
+  ```yml
+  ports:
+    - target: 80
+      published: 80
+      mode: host
+    - target: 443
+      published: 443
+      mode: host
+  ```
 - no set or others will ignore.
