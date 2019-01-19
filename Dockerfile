@@ -1,7 +1,5 @@
-FROM agrozyme/composer:1.8
-COPY source /
-
-RUN set -euxo pipefail \
-  && chmod +x /usr/local/bin/*.sh
-
-CMD ["agrozyme.drupal.command.sh"]
+FROM agrozyme/php:7.2
+COPY rootfs /
+RUN set +e -uxo pipefail && chmod +x /usr/local/bin/* && /usr/local/bin/docker-build.lua
+WORKDIR /var/www/html
+CMD ["/usr/local/bin/docker-run.lua"]
