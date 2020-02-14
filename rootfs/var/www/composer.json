@@ -25,7 +25,7 @@
     "cweagans/composer-patches": "^1.6.5",
     "oomphinc/composer-installers-extender": "^1.0",
     "drupal/console": "^1.0.2",
-    "drupal/core": "8.8.0",
+    "drupal/core": "^8.8.0",
     "drupal/core-composer-scaffold": "^8.8.0",
     "drush/drush": "^9.7.1 | ^10.0.0",
     "vlucas/phpdotenv": "^4.0",
@@ -66,12 +66,7 @@
     ]
   },
   "extra": {
-    "enable-patching": true,
     "composer-exit-on-patch-failure": true,
-    "installer-types": [
-      "bower-asset",
-      "npm-asset"
-    ],
     "patchLevel": {
       "drupal/core": "-p2"
     },
@@ -83,11 +78,6 @@
     "installer-paths": {
       "web/core": [
         "type:drupal-core"
-      ],
-      "web/libraries/{$name}": [
-        "type:drupal-library",
-        "type:bower-asset",
-        "type:npm-asset"
       ],
       "web/modules/contrib/{$name}": [
         "type:drupal-module"
@@ -109,7 +99,17 @@
       ],
       "web/themes/custom/{$name}": [
         "type:drupal-custom-theme"
+      ],
+      "web/libraries/{$name}": [
+        "type:drupal-library",
+        "type:bower-asset",
+        "type:npm-asset"
       ]
-    }
+    },
+    "enable-patching": true,
+    "installer-types": [
+      "bower-asset",
+      "npm-asset"
+    ]
   }
 }
