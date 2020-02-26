@@ -4,9 +4,9 @@ Drupal is an open source content management platform powering millions of websit
 
 # Commands
 
-- drush.phar
-- drupal-check.phar
-- drupal.phar
+- [drush](https://drushcommands.com/)
+- [drupal-check](https://github.com/mglaman/drupal-check)
+- [drupal](https://drupalconsole.com/docs/en/)
 
 # Environment Variables
 
@@ -32,17 +32,4 @@ These variables are optional, can set:
 
 - `none`: no reverse proxy, it will comment all reverse proxy settings.
 - `traefik`: assume use traefik reverse proxy, it will set all reverse proxy settings for traefik.
-
-  set those settings in traefik service at docker-compose file for get real client IP.
-
-  ```yml
-  ports:
-    - target: 80
-      published: 80
-      mode: host
-    - target: 443
-      published: 443
-      mode: host
-  ```
-
 - no set or others will ignore.
