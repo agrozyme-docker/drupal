@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 local core = require("docker-core")
 local pcre = require("rex_pcre")
+local php = require("docker-php")
 
 local function create_project(html)
   local json = html .. "/composer.json"
@@ -101,8 +102,9 @@ local function update_composer()
     return
   end
 
-  core.run("composer -n update drupal/core webflo/drupal-core-require-dev symfony/* --with-dependencies")
-  core.run("composer -n update")
+  core.run("composer -n update drupal/core-recommended --with-dependencies")
+  core.run("drush updatedb")
+  core.run("drush cache:rebuild")
 end
 
 local function main()
@@ -117,9 +119,9 @@ local function main()
   update_security(html)
   update_composer()
 
-  core.clear_path("/run/php-fpm7")
-  core.chown("/var/www/html")
-  core.run("php-fpm7 -F")
+  -- core.run("drush core-status")
+  -- core.run("drupal check")
+  php.run()
 end
 
 main()
